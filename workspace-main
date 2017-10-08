@@ -1,0 +1,15 @@
+#!/bin/sh
+
+SESSION_NAME="main"
+REPO_DIR="$HOME/src/github.com"
+
+tmux ls | grep -q "$SESSION_NAME"
+if [ $? -eq 1 ]; then
+	tmux new-session -s "$SESSION_NAME" -n "doc" -c "$HOME" -d
+	tmux new-window -c "$REPO_DIR"
+	tmux new-window -c "$REPO_DIR"
+	tmux new-window -c "$REPO_DIR"
+	tmux new-window -c "$REPO_DIR"
+fi
+
+tmux -u -2 attach -t "$SESSION_NAME"

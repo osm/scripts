@@ -1,0 +1,10 @@
+#!/bin/sh
+
+SESSION_NAME="misc"
+
+tmux ls | grep -q "$SESSION_NAME"
+if [ $? -eq 1 ]; then
+	tmux new-session -s "$SESSION_NAME" -c "$HOME" -d
+fi
+
+tmux -u -2 attach -t "$SESSION_NAME"
