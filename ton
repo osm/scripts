@@ -1,0 +1,24 @@
+#!/bin/sh
+
+if [ -z "$1" ]; then
+	echo "usage: $0 <ip>" 1>&2
+	exit 1
+fi
+
+toner_status () {
+	grep -A 1 -i "$1" "$2" | tail -n 1 | awk -F "[<>]" '{ print $3 }' | tr "[A-Z]" "[a-z]"
+}
+
+cookie=`mktemp`
+output=`mktemp`
+payload="iToken=&i0016=&i0017=2"
+
+curl -s -c "$cookie" -X POST -d "$payload" "$1"/checkLogin.cgi
+curl -s -b "$cookie" -o "$output" "$1"/portal_top.html
+
+echo "cyan:"`toner_status "cyan" "$output"`
+echo "magenta:"`toner_status "magenta" "$output"`
+echo "yellow:"`toner_status "yellow" "$output"`
+echo "black:"`toner_status "black" "$output"`
+
+rm -f "$cookie" "$output"
