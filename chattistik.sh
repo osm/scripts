@@ -75,10 +75,22 @@ count_words () {
 	echo "$o" | sort -n -r -k 2
 }
 
+# count word for each nick
+# $1: log file
+# $2: word
+count_word () {
+	o=$(for n in $(get_nicks "$1"); do
+		c=$(grep "<.$n>" "$1" | grep -o "$2" | wc -l | awk '{ print $1 }')
+		echo "$n: $c"
+	done)
+
+	echo "$o" | sort -n -r -k 2
+}
+
 # usage
 usage () {
 	echo "usage: $0 -c <channel> -d <log directory> [-f] [-l] [-t date]" 1>&2
-	echo "          [-w]" 1>&2
+	echo "          [-w] [-W <word>]" 1>&2
 }
 
 # short help
@@ -96,13 +108,14 @@ help () {
 	echo "  -l              number of lines for each nick in the channel" 1>&2
 	echo "  -t <date>       date" 1>&2
 	echo "  -w              number of words for each nick in the channel" 1>&2
+	echo "  -W <word>       number of times a specific word has been said by each nick" 1>&2
 	exit 1
 }
 
 
 # main
 main () {
-	while getopts "c:d:fhlt:w" o; do
+	while getopts "c:d:fhlt:wW:" o; do
 		case "$o" in
 		c)
 			c="$OPTARG"
@@ -124,6 +137,9 @@ main () {
 			;;
 		w)
 			w="1"
+			;;
+		W)
+			W="$OPTARG"
 			;;
 		*)
 			short_help
@@ -147,6 +163,8 @@ main () {
 		count_lines "$(get_log_file "$d" "$c" "$t")"
 	elif [ "$w" ]; then
 		count_words "$(get_log_file "$d" "$c" "$t")"
+	elif [ "$W" ]; then
+		count_word "$(get_log_file "$d" "$c" "$t")" "$W"
 	else
 		echo "error: no action has been specified, see -h" 1>&2
 		exit 1
