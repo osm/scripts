@@ -34,13 +34,22 @@ get_log_file () {
 	echo "$r"
 }
 
+# get available nicks from log file
+# $1: log file
+get_nicks () {
+	for n in $(awk -F '[<>]' '{print $2}' "$1" | sed 's/^.//' | sed '/^\s*$/d' | sort | uniq); do
+		echo "$n"
+	done
+}
+
 # first message of the day
 # $1: log file
 first_seen () {
-	o=$(for n in $(awk -F '[<>]' '{print $2}' "$1" | sed 's/^.//' | sed '/^\s*$/d' | sort | uniq); do
+	o=$(for n in $(get_nicks "$1"); do
 		t=$(grep "<.$n>" "$1" | head -n 1 | awk '{ print $1 }')
 		echo "$t: $n"
 	done)
+
 	echo "$o" | sort -n
 }
 
@@ -58,7 +67,7 @@ count_lines () {
 # count words for each nick
 # $1: log file
 count_words () {
-	o=$(for n in $(awk -F '[<>]' '{print $2}' "$1" | sed 's/^.//' | sed '/^\s*$/d' | sort | uniq); do
+	o=$(for n in $(get_nicks "$1"); do
 		w=$(grep "<.$n>" "$1" | sed 's/[^>]*>//' | wc -w | awk '{ print $1 }')
 		echo "$n: $w"
 	done)
