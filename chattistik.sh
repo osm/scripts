@@ -80,7 +80,7 @@ count_words () {
 # $2: word
 count_word () {
 	o=$(for n in $(get_nicks "$1"); do
-		c=$(grep "<.$n>" "$1" | grep -o "$2" | wc -l | awk '{ print $1 }')
+		c=$(grep "<.$n>" "$1" | grep -i -o "$2" | wc -l | awk '{ print $1 }')
 		echo "$n: $c"
 	done)
 
