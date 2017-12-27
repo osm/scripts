@@ -1,7 +1,5 @@
 #!/bin/sh
 
-set -e
-
 # get date
 # $1: date
 get_date () {
@@ -11,7 +9,7 @@ get_date () {
 		echo "$1"
 	else
 		echo "error: -t expects format to be YYYY-mm-dd, got $1" 1>&2
-		exit 1
+		return 1
 	fi
 }
 
@@ -28,7 +26,7 @@ get_log_file () {
 
 	if [ "$r" = "" ]; then
 		echo "error: can't find log file on $t for $2 in $1" 1>&2
-		exit 1
+		return 1
 	fi
 
 	echo "$r"
@@ -157,14 +155,19 @@ main () {
 		exit 1
 	fi
 
+	log_file=$(get_log_file "$d" "$c" "$t")
+	if [ $? -eq 1 ]; then
+		exit 1
+	fi
+
 	if [ "$f" ]; then
-		first_seen "$(get_log_file "$d" "$c" "$t")"
+		first_seen "$log_file"
 	elif [ "$l" ]; then
-		count_lines "$(get_log_file "$d" "$c" "$t")"
+		count_lines "$log_file"
 	elif [ "$w" ]; then
-		count_words "$(get_log_file "$d" "$c" "$t")"
+		count_words "$log_file"
 	elif [ "$W" ]; then
-		count_word "$(get_log_file "$d" "$c" "$t")" "$W"
+		count_word "$log_file" "$W"
 	else
 		echo "error: no action has been specified, see -h" 1>&2
 		exit 1
