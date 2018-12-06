@@ -52,8 +52,8 @@ sub lyssnar {
     my $postfixes = Irssi::settings_get_str('postfixes');
     my @prefixes = split(/, ?/, $prefixes);
     my @postfixes = split(/, ?/, $postfixes);
-    my $prefix = $prefixes[int(rand(scalar(@prefixes)))];
-    my $postfix = $postfixes[int(rand(scalar(@postfixes)))];
+    my $prefix = $prefixes[int(rand(scalar(@prefixes)))] || '';
+    my $postfix = $postfixes[int(rand(scalar(@postfixes)))] || '';
 
     my $output = 'me ' . $prefix . ' ' . $artists . ' - ' . $track . ' @ ' . $url . ' / ' . $uri . ' ' . $postfix;
     Irssi::active_win()->command($output);
