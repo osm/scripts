@@ -1,14 +1,14 @@
 #!/bin/sh
 
 echo -n "irccloud email: "
-read email
+read email </dev/tty
 if [ -z "$email" ]; then
 	echo "invalid email"
 	exit 1
 fi
 
 echo -n "irccloud password: "
-read password
+read password </dev/tty
 if [ -z "$password" ]; then
 	echo "invalid password"
 	exit 1
